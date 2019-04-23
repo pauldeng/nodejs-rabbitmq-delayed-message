@@ -1,5 +1,6 @@
 const delayed_message_exchange = 'delayed-message-exchange';
 const rabbitmq_mqtt_exchange = 'amq.topic';
+const pattern = "";
 const mqtt_topic = 'hello.world'; // MQTT uses slashes ("/") for topic segment separators and AMQP 0-9-1 uses dots
 
 require('amqplib/callback_api')
@@ -21,7 +22,7 @@ function publisher(conn) {
 
         // create and configure exchange if not exist
         ch.assertExchange(delayed_message_exchange, 'x-delayed-message', { durable: false, arguments: { 'x-delayed-type': 'direct' } });
-        ch.bindExchange(rabbitmq_mqtt_exchange, delayed_message_exchange, mqtt_topic);
+        ch.bindExchange(rabbitmq_mqtt_exchange, delayed_message_exchange, pattern);
 
         const headers = { 'x-delay': 3000 };
         ch.publish(delayed_message_exchange, mqtt_topic, Buffer.from((Date.now()).toString()), { headers });
